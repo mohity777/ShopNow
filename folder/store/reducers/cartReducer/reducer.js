@@ -98,11 +98,11 @@ const cReducer = (state = initialState, action) => {
 
         case EDIT_PRODUCT:
             const nar = state.cartItems.map(item => {
-                if (item.id === action.prod.id) {
+                if (item.id === action.id) {
                     return {
                         ...item,
                         title: action.prod.title,
-                        url: action.prod.imgUrl,
+                        imageUrl: action.prod.imageUrl,
                     }
                 }
                 else

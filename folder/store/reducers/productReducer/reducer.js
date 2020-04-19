@@ -1,9 +1,10 @@
 import PRODUCTS from "../../../data/dummy-data"; 
-import { DELETE_PRODUCT, EDIT_PRODUCT, ADD_PRODUCT } from "../../action/productActions/actionTypes"
+import { DELETE_PRODUCT, EDIT_PRODUCT, ADD_PRODUCT, SET_LOADING, SET_PRODUCTS } from "../../action/productActions/actionTypes"
 
 const initialState={
-    availableProducts: PRODUCTS,
-    userProducts: PRODUCTS.filter((product)=>product.ownerId=="u1")
+    availableProducts: [],
+    userProducts: [],
+    loading: true
 }
 
 const pReducer = (state=initialState,action) => {
@@ -23,22 +24,22 @@ const pReducer = (state=initialState,action) => {
 
         case EDIT_PRODUCT: 
             const editedAvailableProducts= state.availableProducts.map( item =>{
-                if(item.id === action.prod.id)
+                if(item.id === action.id)
                  return {
                      ...item,
                      title: action.prod.title,
-                     imageUrl: action.prod.imgUrl,
+                     imageUrl: action.prod.imageUrl,
                      description: action.prod.description
                  }
                 else
                 return item
             })
             const editedUserProducts= state.userProducts.map( item =>{
-                if(item.id === action.prod.id)
+                if(item.id === action.id)
                  return {
                      ...item,
                      title: action.prod.title,
-                     imageUrl: action.prod.imgUrl,
+                     imageUrl: action.prod.imageUrl,
                      description: action.prod.description
                  }
                 else
@@ -49,6 +50,19 @@ const pReducer = (state=initialState,action) => {
                 availableProducts: editedAvailableProducts,
                 userProducts: editedUserProducts
             }
+
+        case SET_LOADING: 
+          return {
+              ...state,
+              loading: action.val
+          }
+
+        case SET_PRODUCTS: 
+          return {
+              ...state,
+              availableProducts: action.products,
+              userProducts: action.products.filter((product)=>product.ownerId=="u1"),
+          }
         default : return state
     }
 }

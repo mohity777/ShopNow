@@ -1,7 +1,7 @@
 import React, { useState, useLayoutEffect } from "react";
 import { View, Text, ScrollView, StyleSheet, TextInput, TouchableOpacity } from "react-native"
 import { useSelector, useDispatch } from "react-redux";
-import { add_prod, edit_prod } from "../store/action/productActions/actions"
+import { postProduct, edit_prod } from "../store/action/productActions/actions"
 import Micon from "react-native-vector-icons/MaterialIcons"
 import Toast from 'react-native-simple-toast';
 
@@ -19,23 +19,21 @@ const UserEditScreen = (props) => {
     const onSubmitPressed = () => {
         if (product) {
             const prod = {
-                id,
                 title,
-                imgUrl,
+                imageUrl: imgUrl,
                 description
             }
-            dispatch(edit_prod(prod))
+            dispatch(edit_prod(id,prod))
             Toast.showWithGravity('Product Edited!', Toast.SHORT, Toast.TOP);
         } else {
             const prod = {
-                id: new Date().getTime(),
                 ownerId: 'u1',
                 imageUrl: imgUrl,
                 title,
                 description,
                 price: parseInt(price)
             }
-            dispatch(add_prod(prod))
+            dispatch(postProduct(prod))
             Toast.showWithGravity('Product Created!', Toast.SHORT, Toast.TOP);
         }
         props.navigation.goBack();
