@@ -102,7 +102,7 @@ const cReducer = (state = initialState, action) => {
                     return {
                         ...item,
                         title: action.prod.title,
-                        imageUrl: action.prod.imageUrl,
+                        imageUrl: action.prod.imageU+rl,
                     }
                 }
                 else

@@ -1,10 +1,11 @@
 import React from 'react';
-import { Text, View, StyleSheet, FlatList } from "react-native"
+import { Text, View, StyleSheet, FlatList, Image } from "react-native"
 import { useSelector, useDispatch } from "react-redux"
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import CartItem from "../components/CartItem"
 import { set_qty, rem_item } from "../store/action/cartActions/actions"
 import { add_order } from "../store/action/orderActions/actions"
+import Icon from "react-native-vector-icons/Fontisto"
 
 const CartScreen = () => {
     const totalSum = useSelector(state => state.cart.totalSum);
@@ -25,13 +26,14 @@ const CartScreen = () => {
     const rem = (id) => {
         dispatch(rem_item(id))
     }
-    return (
-        <FlatList 
-          data={cartItems} 
-          ListHeaderComponent={cartHeader} 
-          keyExtractor={(item, index) => index.toString()} 
-          renderItem={({ item })=> <CartItem setQty={setQty} item={item} rem={rem}/>} 
-        />
+    return (<>{ cartItems.length ? (  <FlatList 
+        data={cartItems} 
+        ListHeaderComponent={cartHeader} 
+        keyExtractor={(item, index) => index.toString()} 
+        renderItem={({ item })=> <CartItem setQty={setQty} item={item} rem={rem}/>} 
+      />) : (<View style={styles.cont}><Icon name="shopping-bag-1" color="black" size={120}/><Text style={styles.txt}>Empty Cart!</Text></View>)}
+      
+        </>
     )
 }
 
@@ -58,7 +60,17 @@ const styles = StyleSheet.create({
     disabled: {
         color: "grey",
         fontWeight: "bold"
-    }
+    },
+    cont: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center"
+      },
+      txt: {
+        marginTop: 15,
+        color: "grey",
+        fontSize: 20
+      }
 })
 
 export default CartScreen;
