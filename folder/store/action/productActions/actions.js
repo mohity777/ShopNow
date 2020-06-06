@@ -4,8 +4,10 @@ import {
   EDIT_PRODUCT,
   SET_PRODUCTS,
   SET_LOADING,
+  SET_USER_PRODUCTS,
 } from './actionTypes';
-import axios from 'axios';
+import Api from '../../../utils/Api';
+import {PATH} from '../../../utils/apiPath';
 
 const del_prod = pid => ({
   // delete req
@@ -37,37 +39,21 @@ const set_loading = val => ({
   val,
 });
 
-// const set_error = error = ({
-//     type: SET_ERROR,
-//     error
-// })
+const set_user_prods = products => ({
+  type: SET_USER_PRODUCTS,
+  products,
+});
 
 const postProduct = prod => {
   return async dispatch => {
     try {
-      // const response = await fetch('http://56568d8f.ngrok.io/api/products',{
-      //     method: 'POST',
-      //     headers: {
-      //         'Content-Type': 'application/json'
-      //         // 'Content-Type': 'application/x-www-form-urlencoded',
-      //       },
-      //     body: JSON.stringify(prod)
-      // })
-      // const product = await response.json();
-      // console.log(product)
       dispatch(set_loading(true));
-      const response = await axios.post(
-        'http://6abe96f3.ngrok.io/api/products',
-        prod,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-      dispatch(add_prod(response.data));
+      const response = await Api.post(PATH.createProduct, prod);
+      console.log('postproduct', response);
+      dispatch(add_prod(response));
       dispatch(set_loading(false));
     } catch (error) {
+      console.log(error);
       dispatch(set_loading(false));
       throw error;
     }
@@ -77,17 +63,11 @@ const postProduct = prod => {
 const fetchProducts = () => {
   return async dispatch => {
     try {
-      const response = await axios.get(
-        'http://6abe96f3.ngrok.io/api/products',
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-      console.log(response);
-      dispatch(set_prods(response.data));
+      const response = await Api.get(PATH.getAllProducts);
+      console.log('fetchproducts', response);
+      dispatch(set_prods(response));
     } catch (error) {
+      console.log(error.response);
       throw error;
     }
   };
@@ -97,7 +77,7 @@ const deleteProduct = id => {
   return async dispatch => {
     try {
       dispatch(set_loading(true));
-      await axios.delete(`http://6abe96f3.ngrok.io/api/products/${id}`);
+      await Api.delete(`${PATH.deleteProduct}${id}`);
       dispatch(del_prod(id));
       dispatch(set_loading(false));
     } catch (error) {
@@ -111,7 +91,7 @@ const putProduct = (id, prod) => {
   return async dispatch => {
     try {
       dispatch(set_loading(true));
-      await axios.put(`http://6abe96f3.ngrok.io/api/products/${id}`, prod);
+      await Api.put(`${PATH.editProduct}${id}`, prod);
       dispatch(edit_prod(id, prod));
       dispatch(set_loading(false));
     } catch (error) {
@@ -121,4 +101,25 @@ const putProduct = (id, prod) => {
   };
 };
 
-export {postProduct, fetchProducts, deleteProduct, putProduct};
+const fetchUserProducts = () => async dispatch => {
+  try {
+    dispatch(set_loading(true));
+    const response = await Api.get(
+      `${PATH.getUserProducts}/5110360c-0d34-4c16-a3ec-419708aec320`,
+    );
+    console.log('@@@@@', response);
+    dispatch(set_user_prods(response));
+    dispatch(set_loading(false));
+  } catch (error) {
+    dispatch(set_loading(false));
+    throw error;
+  }
+};
+
+export {
+  postProduct,
+  fetchProducts,
+  deleteProduct,
+  putProduct,
+  fetchUserProducts,
+};

@@ -1,35 +1,30 @@
 import React, {useEffect, useState} from 'react';
-import {
-  FlatList,
-  ActivityIndicator,
-  Image,
-  StyleSheet,
-  View,
-  Text,
-  Button,
-} from 'react-native';
+import {FlatList} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import ProductCard from '../components/ProductCard';
-import {addToCart} from '../store/action/cartActions/actions';
+import {postCart} from '../store/action/cartActions/actions';
 import {fetchProducts} from '../store/action/productActions/actions';
-import {IMAGES} from '../images/images';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import EmptyScreen from '../components/EmptyScreen';
+import Loader from '../components/Loader';
+import ErrorScreen from '../components/ErrorScreen';
+import Toast from 'react-native-simple-toast';
 
 const ProductOverviewScreen = props => {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
 
   const fetchProds = async () => {
-    setLoading(true);
-    setErrorMsg(null);
     try {
+      setLoading(true);
       await dispatch(fetchProducts());
+      setErrorMsg(null);
+      setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
       setErrorMsg(error);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -38,77 +33,51 @@ const ProductOverviewScreen = props => {
 
   const products = useSelector(state => state.product.availableProducts);
 
-  if (loading) {
-    return (
-      <View style={styles.vew}>
-        <ActivityIndicator size="large" color="grey" />
-      </View>
-    );
-  } else if (errorMsg) {
-    return (
-      <View style={styles.vew}>
-        <Icon name="error" size={100} color="grey" />
-        <Text style={styles.text}>Something went wrong</Text>
-        <Button title="Try again" onPress={fetchProds} color="green" />
-      </View>
-    );
-  } else if (!products.length) {
-    return (
-      <View style={styles.cont}>
-        <Image source={IMAGES.noProducts} style={styles.img} />
-        <Text style={styles.txt}>Sorry, no products for now</Text>
-      </View>
-    );
+  const onPressRight = async item => {
+    try {
+      setLoading(true);
+      await dispatch(postCart(item));
+      setLoading(false);
+      Toast.showWithGravity('Item added to the cart', Toast.LONG, Toast.TOP);
+    } catch (error) {
+      setLoading(false);
+      Toast.showWithGravity('Error', Toast.LONG, Toast.TOP);
+    }
+  };
+
+  if (errorMsg) {
+    return <ErrorScreen loading={loading} onPress={fetchProds} />;
   } else {
     return (
-      <FlatList
-        data={products}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({item}) => (
-          <ProductCard
-            titleRight="Add To Cart"
-            titleLeft="View Details"
-            title={item.title}
-            price={item.price}
-            url={item.imageUrl}
-            onPressRight={() => dispatch(addToCart(item))}
-            onPressLeft={() =>
-              props.navigation.navigate('ProductDetail', {
-                id: item.id,
-                title: item.title,
-              })
-            }
-          />
-        )}
-      />
+      <>
+        <Loader loading={loading} />
+        <FlatList
+          contentContainerStyle={{flexGrow: 1}}
+          data={products}
+          keyExtractor={(item, index) => index.toString()}
+          ListEmptyComponent={
+            <EmptyScreen message="Sorry, no products for now" />
+          }
+          renderItem={({item}) => (
+            <ProductCard
+              titleRight="Add To Cart"
+              titleLeft="View Details"
+              title={item.title}
+              price={item.price}
+              url={item.imageUrl}
+              onPressRight={() => onPressRight(item)}
+              onPressLeft={() =>
+                props.navigation.navigate('ProductDetail', {
+                  id: item.id,
+                  title: item.title,
+                })
+              }
+            />
+          )}
+        />
+      </>
     );
   }
 };
 
-const styles = StyleSheet.create({
-  vew: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cont: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  img: {
-    height: 100,
-    width: 100,
-  },
-  txt: {
-    marginTop: 20,
-    color: 'grey',
-    fontSize: 20,
-  },
-  text: {
-    marginVertical: 15,
-    color: 'grey',
-    fontSize: 20,
-  },
-});
 export default ProductOverviewScreen;

@@ -1,98 +1,127 @@
-import React, { useState} from "react";
-import { Text, View, StyleSheet, Image, TextInput, TouchableOpacity} from "react-native"
-import Icon from "react-native-vector-icons/AntDesign"
-import MyModal from "./MyModal"
+import React, {useState} from 'react';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/AntDesign';
+import MyModal from './MyModal';
 
-const CartItem = (props) => {
-  const item = props.item
-  const cost = (item.quantity) * (item.price)
-  const [visible,setV] = useState(false);
-
-  const closeModal = () =>{
-    setV(false)
-  }
+const CartItem = props => {
+  const item = props.item;
+  const cost = item.quantity * item.price;
+  const [visible, setV] = useState(false);
+  const closeModal = () => {
+    setV(false);
+  };
   const pressOk = () => {
-    props.rem(item.id)
-  }
+    props.rem(item.cid);
+  };
   return (
     <View style={styles.container}>
       <MyModal visible={visible} closeModal={closeModal} pressOk={pressOk} />
       <View style={styles.imgView}>
-        <Image style={styles.image} source={{ uri: item.url }} />
+        <Image style={styles.image} source={{uri: item.url}} />
       </View>
       <View style={styles.txtView}>
         <View style={styles.info}>
           <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.cost}>{cost} Rs.</Text>
+          <Text style={styles.price}>{`${item.price} Rs.`}</Text>
+          <Text style={styles.cost}>
+            <Text style={styles.costKey}>Total Amount: </Text>
+            {`${cost} Rs.`}
+          </Text>
         </View>
         <View style={styles.chgQty}>
-          <TouchableOpacity onPress={() => props.setQty(item.id, item.quantity - 1)} disabled={item.quantity === 1} >
-            <Icon name="minuscircleo" size={23} color={item.quantity === 1 ? "grey" : "black"} />
+          <TouchableOpacity
+            onPress={() => props.setQty(item.cid, item.quantity - 1)}
+            disabled={item.quantity === 1}>
+            <Icon
+              name="minuscircleo"
+              size={20}
+              color={item.quantity === 1 ? 'grey' : 'black'}
+            />
           </TouchableOpacity>
-          <TextInput keyboardType="numeric" value={item.quantity ? (item.quantity).toString() : ""} style={styles.input} onChangeText={(val) => { if (val.length) { props.setQty(item.id, parseInt(val)) } else { props.setQty(item.id, 0) } }} />
-          <TouchableOpacity onPress={() => props.setQty(item.id, item.quantity + 1)}>
-            <Icon name="pluscircleo" size={23} />
+          <TextInput
+            keyboardType="numeric"
+            value={item.quantity ? item.quantity.toString() : ''}
+            style={styles.input}
+            onChangeText={val => props.onChange(val, item.cid)}
+            onEndEditing={() => props.setQty(item.cid, item.quantity)}
+          />
+          <TouchableOpacity
+            onPress={() => props.setQty(item.cid, item.quantity + 1)}>
+            <Icon name="pluscircleo" size={20} />
           </TouchableOpacity>
         </View>
       </View>
       <View style={styles.icView}>
-         <TouchableOpacity onPress={()=> setV(true)}>
-           <Icon name="delete" size={23} color="black"/>
-         </TouchableOpacity>
+        <TouchableOpacity onPress={() => setV(true)}>
+          <Icon name="delete" size={20} color="black" />
+        </TouchableOpacity>
       </View>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    height: 200,
-    margin: 20,
+    padding: 10,
     elevation: 5,
-    backgroundColor: "white",
-    flexDirection: "row",
+    marginVertical: 10,
+    backgroundColor: 'white',
+    flexDirection: 'row',
   },
   imgView: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     flex: 1.5,
   },
   image: {
     height: 150,
-    width: 110
+    width: 110,
   },
   txtView: {
-    flex: 1,
-    justifyContent: "center"
+    flex: 2,
+    // justifyContent: 'center',
   },
   title: {
-    color: "green",
-    fontWeight: "bold",
-    fontSize: 17
+    color: 'green',
+    fontWeight: 'bold',
+    fontSize: 17,
   },
   cost: {
-    color: "grey"
+    marginTop: 10,
+    color: 'grey',
+  },
+  costKey: {
+    color: 'black',
+  },
+  price: {
+    color: 'grey',
   },
   info: {
     flex: 1,
-    justifyContent: "center"
+    // justifyContent: 'center',
   },
   chgQty: {
-    flexDirection: "row",
+    flexDirection: 'row',
     flex: 1,
-    alignItems: "center"
+    alignItems: 'center',
   },
   input: {
-    borderColor: "black",
+    borderColor: 'black',
     borderWidth: 0.5,
     marginHorizontal: 10,
-    padding: 5
+    paddingVertical: 0,
   },
   icView: {
-    flex:1,
-    alignItems: "flex-end",
-    padding: 15
-  }
-})
+    flex: 0.5,
+    alignItems: 'flex-end',
+  },
+});
 
 export default CartItem;
