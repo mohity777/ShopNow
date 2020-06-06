@@ -4,6 +4,7 @@ import {
   ADD_PRODUCT,
   SET_PRODUCTS,
   SET_LOADING,
+  SET_USER_PRODUCTS,
 } from '../../action/productActions/actionTypes';
 
 const initialState = {
@@ -63,9 +64,11 @@ const pReducer = (state = initialState, action) => {
       return {
         ...state,
         availableProducts: action.products,
-        userProducts: action.products.filter(
-          product => product.ownerId == 'u1',
-        ),
+      };
+    case SET_USER_PRODUCTS:
+      return {
+        ...state,
+        userProducts: action.products,
       };
 
     case SET_LOADING:
