@@ -33,15 +33,12 @@ const postOrder = (cartItems, totalAmount) => async dispatch => {
       `${PATH.postOrder}/5110360c-0d34-4c16-a3ec-419708aec320`,
       {
         totalAmount,
-        cartItems: cartItems.map((item, index) => ({
-          title: item.title,
-          price: item.price,
-          quantity: item.quantity,
-        })),
+        cartItems,
       },
     );
     console.log('addorders$$$$$$$$$$', result);
-    dispatch(add_order(result));
+    // dispatch(add_order(result));
+    await dispatch(fetchOrders());
   } catch (error) {
     console.log('error at post order77777777', error);
     throw error;
