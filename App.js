@@ -1,26 +1,44 @@
-import React from 'react';
-import { combineReducers, createStore, applyMiddleware } from "redux"
-import { Provider } from "react-redux"
-import pReducer from "./folder/store/reducers/productReducer/reducer"
-import cReducer from "./folder/store/reducers/cartReducer/reducer"
-import StackScreen from "./folder/navigation/ShopNavigator"
-import oReducer from './folder/store/reducers/orderReducer/reducer';
-import thunk from "redux-thunk"
+import React, {useEffect, useState} from 'react';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {Provider, useSelector} from 'react-redux';
+import HomeStack from './folder/navigation/ShopNavigator';
+import LoginStack from './folder/navigation/loginStack';
+import {View, ActivityIndicator} from 'react-native';
+import {getUserToken} from './folder/store/action/authActions/actions';
+import store from './folder/store';
+import SplashScreen from 'react-native-splash-screen';
 
-const rootReducer = combineReducers({
-  product: pReducer,
-  cart: cReducer,
-  order: oReducer,
-})
-
-const store = createStore(rootReducer,applyMiddleware(thunk))
-
-const App = () => {
+const RootComponent = props => {
+  const token = useSelector(state => state.user.token);
   return (
-    <Provider store={store}>
-      <StackScreen />
-    </Provider>
-  )
-}
+    <SafeAreaProvider>
+      {token ? <HomeStack /> : <LoginStack />}
+    </SafeAreaProvider>
+  );
+};
+const App = () => {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    init();
+  }, []);
+
+  const init = async () => {
+    await store.dispatch(getUserToken());
+    setLoading(false);
+  };
+
+  if (loading)
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator color="green" />
+      </View>
+    );
+  else
+    return (
+      <Provider store={store}>
+        <RootComponent />
+      </Provider>
+    );
+};
 
 export default App;

@@ -74,7 +74,7 @@ const CartScreen = () => {
       await dispatch(deleteCart(cid));
       setError(false);
       setLoading(false);
-      Toast('Product Removed');
+      Toast.showWithGravity('Product Removed', Toast.SHORT, Toast.BOTTOM);
     } catch (err) {
       setLoading(false);
       setError(true);

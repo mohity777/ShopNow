@@ -8,6 +8,7 @@ import EmptyScreen from '../components/EmptyScreen';
 import Loader from '../components/Loader';
 import ErrorScreen from '../components/ErrorScreen';
 import Toast from 'react-native-simple-toast';
+import SplashScreen from 'react-native-splash-screen';
 
 const ProductOverviewScreen = props => {
   const dispatch = useDispatch();
@@ -28,6 +29,7 @@ const ProductOverviewScreen = props => {
   };
 
   useEffect(() => {
+    SplashScreen.hide();
     fetchProds();
   }, []);
 
@@ -41,7 +43,6 @@ const ProductOverviewScreen = props => {
       Toast.showWithGravity('Item added to the cart', Toast.LONG, Toast.TOP);
     } catch (error) {
       setLoading(false);
-      Toast.showWithGravity('Error', Toast.LONG, Toast.TOP);
     }
   };
 

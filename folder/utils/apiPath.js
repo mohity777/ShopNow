@@ -1,4 +1,4 @@
-const baseUrl = 'http://ccf79ad6bb23.ngrok.io/api/';
+const baseUrl = 'http://8f820b1ed9c0.ngrok.io/api/';
 
 const PATH = {
   // product api
@@ -6,10 +6,10 @@ const PATH = {
   getAllProducts: 'products',
   deleteProduct: 'products/',
   editProduct: 'products/',
-  getUserProducts: 'products/UserProducts',
+  getUserProducts: 'products/myProducts/',
 
   // cart api
-  addToCart: 'cart',
+  addToCart: 'cart/',
   getCart: 'cart',
   editCart: 'cart/',
   deleteCartItem: 'cart/',
@@ -17,6 +17,9 @@ const PATH = {
   // orders api
   getOrders: 'orders',
   postOrder: 'orders',
+
+  // login api
+  login: 'users/login',
 };
 
 export {baseUrl, PATH};

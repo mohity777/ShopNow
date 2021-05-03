@@ -12,24 +12,24 @@ import MyModal from './MyModal';
 
 const CartItem = props => {
   const item = props.item;
-  const cost = item.quantity * item.price;
+  const cost = item.quantity * item.product.price;
   const [visible, setV] = useState(false);
   const closeModal = () => {
     setV(false);
   };
   const pressOk = () => {
-    props.rem(item.cid);
+    props.rem(item.cartItemId);
   };
   return (
     <View style={styles.container}>
       <MyModal visible={visible} closeModal={closeModal} pressOk={pressOk} />
       <View style={styles.imgView}>
-        <Image style={styles.image} source={{uri: item.url}} />
+        <Image style={styles.image} source={{uri: item.product.url}} />
       </View>
       <View style={styles.txtView}>
         <View style={styles.info}>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.price}>{`${item.price} Rs.`}</Text>
+          <Text style={styles.title}>{item.product.title}</Text>
+          <Text style={styles.price}>{`${item.product.price} Rs.`}</Text>
           <Text style={styles.cost}>
             <Text style={styles.costKey}>Total Amount: </Text>
             {`${cost} Rs.`}
@@ -37,7 +37,7 @@ const CartItem = props => {
         </View>
         <View style={styles.chgQty}>
           <TouchableOpacity
-            onPress={() => props.setQty(item.cid, item.quantity - 1)}
+            onPress={() => props.setQty(item.cartItemId, item.quantity - 1)}
             disabled={item.quantity === 1}>
             <Icon
               name="minuscircleo"
@@ -49,11 +49,11 @@ const CartItem = props => {
             keyboardType="numeric"
             value={item.quantity ? item.quantity.toString() : ''}
             style={styles.input}
-            onChangeText={val => props.onChange(val, item.cid)}
-            onEndEditing={() => props.setQty(item.cid, item.quantity)}
+            onChangeText={val => props.onChange(val, item.cartItemId)}
+            onEndEditing={() => props.setQty(item.cartItemId, item.quantity)}
           />
           <TouchableOpacity
-            onPress={() => props.setQty(item.cid, item.quantity + 1)}>
+            onPress={() => props.setQty(item.cartItemId, item.quantity + 1)}>
             <Icon name="pluscircleo" size={20} />
           </TouchableOpacity>
         </View>

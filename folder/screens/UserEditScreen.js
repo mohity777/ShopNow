@@ -51,7 +51,6 @@ const UserEditScreen = props => {
         props.navigation.goBack();
       } else {
         const prod = {
-          userUid: '5110360c-0d34-4c16-a3ec-419708aec320',
           imageUrl: imgUrl,
           title,
           description,
@@ -65,8 +64,6 @@ const UserEditScreen = props => {
     } catch (error) {
       console.log(error);
       setLoading(false);
-      Toast.showWithGravity('Something went wrong', Toast.SHORT, Toast.TOP);
-      props.navigation.goBack();
     }
   };
 

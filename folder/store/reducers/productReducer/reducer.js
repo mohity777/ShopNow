@@ -15,50 +15,50 @@ const initialState = {
 
 const pReducer = (state = initialState, action) => {
   switch (action.type) {
-    case DELETE_PRODUCT:
-      return {
-        ...state,
-        availableProducts: state.availableProducts.filter(
-          product => product.id !== action.pid,
-        ),
-        userProducts: state.userProducts.filter(
-          product => product.id !== action.pid,
-        ),
-      };
+    // case DELETE_PRODUCT:
+    //   return {
+    //     ...state,
+    //     availableProducts: state.availableProducts.filter(
+    //       product => product.id !== action.pid,
+    //     ),
+    //     userProducts: state.userProducts.filter(
+    //       product => product.id !== action.pid,
+    //     ),
+    //   };
 
-    case ADD_PRODUCT:
-      return {
-        ...state,
-        availableProducts: [action.prod, ...state.availableProducts],
-        userProducts: [action.prod, ...state.userProducts],
-      };
+    // case ADD_PRODUCT:
+    //   return {
+    //     ...state,
+    //     availableProducts: [action.prod, ...state.availableProducts],
+    //     userProducts: [action.prod, ...state.userProducts],
+    //   };
 
-    case EDIT_PRODUCT:
-      const editedAvailableProducts = state.availableProducts.map(item => {
-        if (item.id === action.id)
-          return {
-            ...item,
-            title: action.prod.title,
-            imageUrl: action.prod.imageUrl,
-            description: action.prod.description,
-          };
-        else return item;
-      });
-      const editedUserProducts = state.userProducts.map(item => {
-        if (item.id === action.id)
-          return {
-            ...item,
-            title: action.prod.title,
-            imageUrl: action.prod.imageUrl,
-            description: action.prod.description,
-          };
-        else return item;
-      });
-      return {
-        ...state,
-        availableProducts: editedAvailableProducts,
-        userProducts: editedUserProducts,
-      };
+    // case EDIT_PRODUCT:
+    //   const editedAvailableProducts = state.availableProducts.map(item => {
+    //     if (item.id === action.id)
+    //       return {
+    //         ...item,
+    //         title: action.prod.title,
+    //         imageUrl: action.prod.imageUrl,
+    //         description: action.prod.description,
+    //       };
+    //     else return item;
+    //   });
+    //   const editedUserProducts = state.userProducts.map(item => {
+    //     if (item.id === action.id)
+    //       return {
+    //         ...item,
+    //         title: action.prod.title,
+    //         imageUrl: action.prod.imageUrl,
+    //         description: action.prod.description,
+    //       };
+    //     else return item;
+    //   });
+    //   return {
+    //     ...state,
+    //     availableProducts: editedAvailableProducts,
+    //     userProducts: editedUserProducts,
+    //   };
 
     case SET_PRODUCTS:
       return {

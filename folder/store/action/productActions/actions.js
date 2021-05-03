@@ -8,25 +8,8 @@ import {
 } from './actionTypes';
 import Api from '../../../utils/Api';
 import {PATH} from '../../../utils/apiPath';
-
-const del_prod = pid => ({
-  // delete req
-  type: DELETE_PRODUCT,
-  pid,
-});
-
-const add_prod = prod => ({
-  // post req
-  type: ADD_PRODUCT,
-  prod,
-});
-
-const edit_prod = (id, prod) => ({
-  // put req
-  type: EDIT_PRODUCT,
-  id,
-  prod,
-});
+import Toast from 'react-native-simple-toast';
+import {checkError} from '../../../utils/functions';
 
 const set_prods = products => ({
   // get req
@@ -50,11 +33,13 @@ const postProduct = prod => {
       dispatch(set_loading(true));
       const response = await Api.post(PATH.createProduct, prod);
       console.log('postproduct', response);
-      dispatch(add_prod(response));
+      await dispatch(fetchUserProducts());
+      await dispatch(fetchProducts());
       dispatch(set_loading(false));
     } catch (error) {
       console.log(error);
       dispatch(set_loading(false));
+      checkError(error);
       throw error;
     }
   };
@@ -68,6 +53,7 @@ const fetchProducts = () => {
       dispatch(set_prods(response));
     } catch (error) {
       console.log(error.response);
+      checkError(error);
       throw error;
     }
   };
@@ -78,10 +64,13 @@ const deleteProduct = id => {
     try {
       dispatch(set_loading(true));
       await Api.delete(`${PATH.deleteProduct}${id}`);
-      dispatch(del_prod(id));
+      await dispatch(fetchUserProducts());
+      await dispatch(fetchProducts());
       dispatch(set_loading(false));
     } catch (error) {
       dispatch(set_loading(false));
+      checkError(error);
+      console.log(error);
       throw error;
     }
   };
@@ -91,11 +80,14 @@ const putProduct = (id, prod) => {
   return async dispatch => {
     try {
       dispatch(set_loading(true));
-      await Api.put(`${PATH.editProduct}${id}`, prod);
-      dispatch(edit_prod(id, prod));
+      const res = await Api.put(`${PATH.editProduct}${id}`, prod);
+      console.log(res);
+      await dispatch(fetchUserProducts());
+      await dispatch(fetchProducts());
       dispatch(set_loading(false));
     } catch (error) {
       dispatch(set_loading(false));
+      checkError(error);
       throw error;
     }
   };
@@ -104,14 +96,13 @@ const putProduct = (id, prod) => {
 const fetchUserProducts = () => async dispatch => {
   try {
     dispatch(set_loading(true));
-    const response = await Api.get(
-      `${PATH.getUserProducts}/5110360c-0d34-4c16-a3ec-419708aec320`,
-    );
+    const response = await Api.get(PATH.getUserProducts);
     console.log('@@@@@', response);
     dispatch(set_user_prods(response));
     dispatch(set_loading(false));
   } catch (error) {
     dispatch(set_loading(false));
+    checkError(error);
     throw error;
   }
 };

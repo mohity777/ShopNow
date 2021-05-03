@@ -1,9 +1,15 @@
 import React from 'react';
-import {View, StyleSheet, Image, Text} from 'react-native';
+import {View, StyleSheet, Image, Text, Button} from 'react-native';
 import {IMAGES} from './../images/images';
 import {DrawerItemList} from '@react-navigation/drawer';
+import {useDispatch} from 'react-redux';
 
 const CustomDrawer = props => {
+  const dispatch = useDispatch();
+  const logout = () => {
+    props.navigation.toggleDrawer();
+    dispatch({type: 'LOGOUT'});
+  };
   return (
     <>
       <View style={styles.container}>
@@ -12,6 +18,9 @@ const CustomDrawer = props => {
           <Text style={styles.txt}>ShopNow</Text>
         </View>
         <DrawerItemList {...props} />
+        <View style={{padding: 10}}>
+          <Button title="Logout" onPress={logout} color="green" />
+        </View>
         <Image source={IMAGES.drawerEnd} style={styles.end} />
       </View>
     </>

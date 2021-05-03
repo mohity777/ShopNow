@@ -1,6 +1,7 @@
-import {ADD_TO_CART, SET_QTY, REM_ITEM, SET_CART} from './actionTypes';
+import {ADD_TO_CART, SET_ITEM, REM_ITEM, SET_CART} from './actionTypes';
 import Api from '../../../utils/Api';
 import {PATH} from '../../../utils/apiPath';
+import {checkError} from '../../../utils/functions';
 
 const addToCart = (product, item) => ({
   type: ADD_TO_CART,
@@ -8,10 +9,9 @@ const addToCart = (product, item) => ({
   item,
 });
 
-const set_qty = (cid, qty) => ({
-  type: SET_QTY,
-  cid,
-  qty,
+const set_item = payload => ({
+  type: SET_ITEM,
+  payload,
 });
 
 const rem_item = cid => ({
@@ -24,19 +24,18 @@ const set_cart = payload => ({
   payload,
 });
 
-const postCart = prod => async dispatch => {
+const postCart = prod => async (dispatch, getState) => {
   try {
     console.log('postcart');
-    const result = await Api.post(
-      `${PATH.addToCart}/5110360c-0d34-4c16-a3ec-419708aec320`,
-      {
-        id: prod.id,
-      },
-    );
-    console.log('postcart##############', result);
-    dispatch(addToCart(prod, result));
+    const cartId = await getState().user.cartId;
+    console.log('Ffff', cartId);
+    console.log(PATH.addToCart + cartId + 'kkjj');
+    const result = await Api.post(PATH.addToCart + cartId, {
+      id: prod.id,
+    });
   } catch (error) {
     console.log('**postCart error\n', error);
+    checkError(error);
     throw error;
   }
 };
@@ -44,13 +43,12 @@ const postCart = prod => async dispatch => {
 const fetchCart = () => {
   return async dispatch => {
     try {
-      const result = await Api.get(
-        `${PATH.getCart}/5110360c-0d34-4c16-a3ec-419708aec320`,
-      );
+      const result = await Api.get(PATH.getCart);
       console.log('fetchcart', result);
       dispatch(set_cart(result));
     } catch (error) {
       console.log('**fetchCart error**\n', error);
+      checkError(error);
       throw error;
     }
   };
@@ -59,12 +57,14 @@ const fetchCart = () => {
 const putCart = (cid, qty) => async dispatch => {
   try {
     console.log('putCart', qty);
-    await Api.put(`${PATH.editCart}${cid}`, {
+    const res = await Api.put(PATH.editCart + cid, {
       quantity: qty,
     });
-    dispatch(set_qty(cid, qty));
+    console.log(res);
+    dispatch(set_item(res));
   } catch (error) {
     console.log('**putCart error**\n', error);
+    checkError(error);
     throw error;
   }
 };
@@ -74,10 +74,11 @@ const deleteCart = cid => async dispatch => {
     console.log('deletecart start');
     await Api.delete(`${PATH.deleteCartItem}${cid}`);
     console.log('del2');
-    dispatch(rem_item(cid));
+    await dispatch(fetchCart());
   } catch (error) {
     console.log('**deleteCart error**\n', error);
+    checkError(error);
     throw error;
   }
 };
-export {postCart, fetchCart, putCart, deleteCart, set_qty};
+export {postCart, fetchCart, putCart, deleteCart};
